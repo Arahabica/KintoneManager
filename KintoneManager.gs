@@ -17,7 +17,7 @@ var KintoneManager = (function() {
    *    }
    * }
    *
-   * @param {string} subdomain your subdomain
+   * @param {string} subdomain your subdomain (For kintone.com domains, you must state the FQDN such as "subdomain.kintone.com" )
    * @param {object} apps application information.
    * @param {string} user (optional) user name or encoded authentication information: base64("USER:PASS")
    * @param {string} pass (optional) password
@@ -178,7 +178,11 @@ var KintoneManager = (function() {
    * @private
    */
   KintoneManager.prototype._getEndpoint = function(guest_id) {
-    var endpoint = "https://@1.cybozu.com".replace(/@1/g, this.subdomain);
+    if(this.subdomain.slice(-4) == '.com') {
+      var endpoint = "https://@1".replace(/@1/g, this.subdomain);
+    } else {
+      var endpoint = "https://@1.cybozu.com".replace(/@1/g, this.subdomain);
+    }
     if (guest_id == null) {
       return endpoint + "/k/v1";
     } else {
