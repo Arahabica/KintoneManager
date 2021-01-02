@@ -63,7 +63,7 @@ var KintoneManager = (function() {
     var q = encodeURIComponent(query);
     var app = this.apps[app_name];
     var response = UrlFetchApp.fetch(
-      "@1/records.json?app=@2&query=@3"
+      "@1/records.json?app=@2&query=@3&totalCount=true"
         .replace(/@1/g, this._getEndpoint(app.guestid))
         .replace(/@2/g, app.appid)
         .replace(/@3/g, q),
