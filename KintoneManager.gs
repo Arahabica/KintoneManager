@@ -1,8 +1,9 @@
 var KintoneManager = (function() {
   "use strict";
   /**
-   * user, passが指定されれば、パスワード認証
+   * auth: {user: 'user', pass: 'pass'}が指定されれば、パスワード認証
    * 指定されなければ、APIトークン認証
+   * auth: {basic: {user: 'user', pass: 'pass'}}が指定されれば、Basic認証
    * appsは以下の形式
    * {
    *    // アプリケーション名はkintoneのデータに依存せず、GAS内のコードで取り扱う専用
@@ -23,16 +24,18 @@ var KintoneManager = (function() {
    * @param {string} pass (optional) password
    * @constructor
    */
-  function KintoneManager(subdomain, apps, user, pass) {
+  function KintoneManager(subdomain, apps, auth) {
     this.subdomain = subdomain;
     this.authorization = null;
     this.apps = apps;
 
-    if (arguments.length > 3) {
-      this.authorization = Utilities.base64Encode(user + ":" + pass);
-    } else if (arguments.length > 2) {
-      // 引数が3つの場合はエンコード済みの認証情報として処理
-      this.authorization = user;
+    if (arguments.length === 3) {
+      if (auth.user && auth.pass) {
+        this.authorization = Utilities.base64Encode(auth.user + ":" + auth.pass);
+      }
+      if (auth.basic) {
+        this.basic = auth.basic;
+      }
     }
   }
   /**
@@ -197,15 +200,21 @@ var KintoneManager = (function() {
    * @private
    */
   KintoneManager.prototype._authorizationHeader = function(app) {
+    Logger.log('app=> "%s"', app);
+    var auth = {};
     if (this.authorization) {
       // Password authentication
-      return { "X-Cybozu-Authorization": this.authorization };
+      auth["X-Cybozu-Authorization"] = this.authorization;
     } else if (app.token) {
       // API token authentication
-      return { "X-Cybozu-API-Token": app.token };
+      auth["X-Cybozu-API-Token"] = app.token;
     } else {
       throw new Error("Authentication Failed");
     }
+    if (this.basic) {
+      auth["Authorization"] = "Basic " + Utilities.base64Encode(this.basic["user"] + ":" + this.basic["pass"]);
+    }
+    return auth;
   };
   return KintoneManager;
 })();
