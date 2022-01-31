@@ -4,7 +4,7 @@
 
 ## Script ID (For New editor)
 
-`1M8DHQSWWGOM2RSRjDZmylHMl03nZHnliaVMGMk84m6jQ05ditPBTCSM8`
+`1UMIqaatccEb68gRI0rDbupn8UdF5nxMcQghQXzyOLyEHnqunUoIcpU5y`
 
 ## Project Key (For Legacy editor)
 
